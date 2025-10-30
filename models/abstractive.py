@@ -14,7 +14,15 @@ class AbstractiveSummarizer:
         
         # Load model and tokenizer
         self.model = T5ForConditionalGeneration.from_pretrained(model_name).to(self.device)
-        self.tokenizer = T5Tokenizer.from_pretrained(model_name)
+        try:
+            # Loading the tokenizer may require SentencePiece to be installed in the environment.
+            self.tokenizer = T5Tokenizer.from_pretrained(model_name)
+        except ImportError as e:
+            # Raise a clearer message so deployment logs show an actionable instruction
+            raise ImportError(
+                "T5Tokenizer requires the 'sentencepiece' package. "
+                "Add 'sentencepiece' to your requirements.txt and redeploy (pip package name: sentencepiece)."
+            ) from e
         
         # Set model to evaluation mode
         self.model.eval()
