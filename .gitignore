@@ -1,0 +1,27 @@
+# Virtual environments
+.venv/
+.venv-1/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ML & Data
+nltk_data/
+.model_cache/
+*.bin
+*.ckpt
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+.DS_Store
+*.log
+logs/
+.env
