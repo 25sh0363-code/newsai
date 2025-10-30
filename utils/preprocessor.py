@@ -11,31 +11,28 @@ from nltk.corpus import stopwords
 
 def ensure_nltk_data():
     """Ensure all required NLTK data is downloaded."""
-    # Prefer a local nltk_data directory inside the project so Streamlit/venv
-    # environments can write there and we have deterministic behavior.
+    
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     local_nltk_dir = os.path.join(project_root, 'nltk_data')
     if not os.path.isdir(local_nltk_dir):
         try:
             os.makedirs(local_nltk_dir, exist_ok=True)
         except Exception:
-            # If we cannot create the directory, fall back to default downloader behavior
+            
             local_nltk_dir = None
 
-    # Ensure NLTK looks in our local directory first
     if local_nltk_dir and local_nltk_dir not in nltk.data.path:
         nltk.data.path.insert(0, local_nltk_dir)
 
-    # Download required corpora if missing, prefer local download_dir
+  
     try:
         sent_tokenize("Test sentence.")
     except LookupError:
-        # Newer NLTK versions may expect 'punkt_tab' data. Try that first,
-        # then fall back to the classic 'punkt' package.
+     
         try:
             nltk.download('punkt_tab', download_dir=local_nltk_dir)
         except Exception:
-            # Fallback to classic punkt
+           
             nltk.download('punkt', download_dir=local_nltk_dir)
 
     try:
@@ -46,7 +43,7 @@ def ensure_nltk_data():
 class TextPreprocessor:
     def __init__(self, language: str = 'english'):
         """Initialize the text preprocessor."""
-        # Ensure NLTK data is available
+     
         ensure_nltk_data()
         
         self.language = language
@@ -54,9 +51,9 @@ class TextPreprocessor:
 
     def clean_text(self, text: str) -> str:
         """Remove special characters and excessive whitespace."""
-        # Remove special characters
+       
         text = re.sub(r'[^\w\s.,!?]', '', text)
-        # Remove extra whitespace
+      
         text = re.sub(r'\s+', ' ', text).strip()
         return text
 
@@ -76,10 +73,10 @@ class TextPreprocessor:
 
     def preprocess(self, text: str, remove_stopwords: bool = False) -> str:
         """Apply full preprocessing pipeline."""
-        # Clean text
+       
         text = self.clean_text(text)
         
-        # Optionally remove stopwords
+        
         if remove_stopwords:
             text = self.remove_stopwords(text)
         
