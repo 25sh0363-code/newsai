@@ -12,19 +12,19 @@ class AbstractiveSummarizer:
         self.device = device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
         self.model_name = model_name
         
-        # Load model and tokenizer
+        
         self.model = T5ForConditionalGeneration.from_pretrained(model_name).to(self.device)
         try:
-            # Loading the tokenizer may require SentencePiece to be installed in the environment.
+            
             self.tokenizer = T5Tokenizer.from_pretrained(model_name)
         except ImportError as e:
-            # Raise a clearer message so deployment logs show an actionable instruction
+     
             raise ImportError(
                 "T5Tokenizer requires the 'sentencepiece' package. "
                 "Add 'sentencepiece' to your requirements.txt and redeploy (pip package name: sentencepiece)."
             ) from e
         
-        # Set model to evaluation mode
+    
         self.model.eval()
 
     def summarize(self, 
@@ -34,16 +34,15 @@ class AbstractiveSummarizer:
                  temperature: float = 0.7) -> Dict[str, any]:
         """Generate abstractive summary."""
         try:
-            # Prepare input text
+          
             input_text = f"summarize: {text}"
             
-            # Tokenize input
+         
             inputs = self.tokenizer(input_text, 
                                   return_tensors='pt',
                                   max_length=1024,
                                   truncation=True).to(self.device)
-            
-            # Generate summary
+     
             with torch.no_grad():
                 outputs = self.model.generate(
                     inputs['input_ids'],
@@ -55,7 +54,7 @@ class AbstractiveSummarizer:
                     early_stopping=True
                 )
             
-            # Decode summary
+      
             summary = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
             
             return {
@@ -79,12 +78,12 @@ class AbstractiveSummarizer:
                           temperature: float = 0.7) -> Dict[str, any]:
         """Handle long texts by chunking and summarizing each chunk."""
         try:
-            # Split text into chunks
+         
             words = text.split()
             chunks = [' '.join(words[i:i + chunk_size]) 
                      for i in range(0, len(words), chunk_size)]
             
-            # Summarize each chunk
+            
             chunk_summaries = []
             for chunk in chunks:
                 result = self.summarize(chunk, max_length, min_length, temperature)
@@ -98,7 +97,7 @@ class AbstractiveSummarizer:
                     'error': 'Failed to generate summaries for chunks'
                 }
             
-            # If multiple chunks, summarize the combined summaries
+          
             if len(chunk_summaries) > 1:
                 combined = ' '.join(chunk_summaries)
                 return self.summarize(combined, max_length, min_length, temperature)
