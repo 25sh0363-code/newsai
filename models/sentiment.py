@@ -9,9 +9,9 @@ class SentimentAnalyzer:
     def __init__(self, model_name: str = 'distilbert-base-uncased-finetuned-sst-2-english', device: str = None):
         """Initialize the sentiment analyzer."""
         self.model_name = model_name
-        self.device = device if device else -1  # -1 for CPU, >= 0 for specific GPU
+        self.device = device if device else -1 
         
-        # Load sentiment analysis pipeline
+    
         self.analyzer = pipeline(
             'sentiment-analysis',
             model=model_name,
@@ -21,10 +21,10 @@ class SentimentAnalyzer:
     def analyze(self, text: str) -> Dict[str, any]:
         """Analyze sentiment of text."""
         try:
-            # Perform sentiment analysis
-            result = self.analyzer(text[:1000])[0]  # Use first 1000 chars to avoid token limit
+           
+            result = self.analyzer(text[:1000])[0]  
             
-            # Map label to sentiment
+           
             sentiment_map = {
                 'POSITIVE': '😊 Positive',
                 'NEGATIVE': '😞 Negative',
@@ -52,8 +52,8 @@ class SentimentAnalyzer:
     def get_color(self, sentiment: str) -> str:
         """Get color code for sentiment visualization."""
         color_map = {
-            '😊 Positive': '#28a745',  # Green
-            '😞 Negative': '#dc3545',  # Red
-            '😐 Neutral': '#6c757d'    # Gray
+            '😊 Positive': '#28a745',  
+            '😞 Negative': '#dc3545',  
+            '😐 Neutral': '#6c757d'    
         }
         return color_map.get(sentiment, '#6c757d')
