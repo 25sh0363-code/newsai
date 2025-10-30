@@ -50,7 +50,7 @@ def load_sentiment_model():
 def main():
     # Page config
     st.set_page_config(
-        page_title="📰 MLehheheh-Powered News Summarizer",
+        page_title="📰 ML-Powered News Summarizer",
         page_icon="📰",
         layout="wide"
     )
