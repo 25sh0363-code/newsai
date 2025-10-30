@@ -9,5 +9,4 @@ scikit-learn>=1.3.0
 rouge-score>=0.1.2
 tqdm>=4.65.0
 sentencepiece>=0.2.1
-# lxml html clean helper used by newspaper3k parsers
 lxml_html_clean>=0.3.1
