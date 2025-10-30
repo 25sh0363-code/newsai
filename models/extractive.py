@@ -14,11 +14,11 @@ class ExtractiveSummarizer:
         self.device = device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
         self.model_name = model_name
         
-        # Load model and tokenizer
+       
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         
-        # Set model to evaluation mode
+        
         self.model.eval()
 
     def _get_embeddings(self, sentences: List[str]) -> torch.Tensor:
@@ -27,15 +27,15 @@ class ExtractiveSummarizer:
         
         with torch.no_grad():
             for sentence in sentences:
-                # Tokenize and encode sentence
+               
                 inputs = self.tokenizer(sentence, return_tensors='pt', 
                                       padding=True, truncation=True, 
                                       max_length=512).to(self.device)
                 
-                # Get BERT outputs
+             
                 outputs = self.model(**inputs)
                 
-                # Use [CLS] token embedding as sentence representation
+             
                 embedding = outputs.last_hidden_state[:, 0, :].cpu().numpy()
                 embeddings.append(embedding[0])
         
@@ -43,13 +43,13 @@ class ExtractiveSummarizer:
 
     def _rank_sentences(self, embeddings: np.ndarray) -> np.ndarray:
         """Rank sentences based on cosine similarity."""
-        # Calculate similarity matrix
+   
         similarity_matrix = cosine_similarity(embeddings)
         
-        # Calculate sentence scores using similarity matrix
+       
         scores = np.sum(similarity_matrix, axis=1)
         
-        # Get ranking of sentences
+        
         ranked_sentences = np.argsort(scores)[::-1]
         
         return ranked_sentences
@@ -65,19 +65,19 @@ class ExtractiveSummarizer:
             }
             
         try:
-            # Limit number of sentences to summarize
+           
             num_sentences = min(num_sentences, len(sentences))
             
-            # Get sentence embeddings
+           
             embeddings = self._get_embeddings(sentences)
             
-            # Rank sentences
+           
             ranked_sentences = self._rank_sentences(embeddings)
             
-            # Select top sentences (ensure indices are Python ints)
+          
             selected_indices = sorted([int(i) for i in ranked_sentences[:num_sentences]])
             
-            # Combine selected sentences in original order
+            
             summary = ' '.join([sentences[i] for i in selected_indices])
             
             return {
