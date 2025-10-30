@@ -7,7 +7,7 @@ from typing import Optional, Dict
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
-# Try to import newspaper3k, fallback to pure BeautifulSoup if it fails
+
 try:
     from newspaper import Article
     NEWSPAPER_AVAILABLE = True
@@ -38,10 +38,10 @@ class ArticleScraper:
                     'error': None
                 }
             except Exception as e:
-                # Fallback to BeautifulSoup if newspaper3k fails
+               
                 return self._extract_with_beautifulsoup(url)
         else:
-            # Use BeautifulSoup directly if newspaper3k is not available
+           
             return self._extract_with_beautifulsoup(url)
 
     def _extract_with_beautifulsoup(self, url: str) -> Dict[str, str]:
@@ -52,18 +52,16 @@ class ArticleScraper:
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Remove unwanted elements
             for element in soup.find_all(['script', 'style', 'nav', 'header', 'footer']):
                 element.decompose()
             
-            # Extract title
+           
             title = soup.find('h1')
             title = title.text.strip() if title else ''
             
-            # Extract main content
+          
             article_text = ''
-            
-            # Try common article content selectors
+   
             content_selectors = [
                 'article',
                 '[role="main"]',
@@ -79,7 +77,7 @@ class ArticleScraper:
                     article_text = ' '.join([p.text.strip() for p in content.find_all('p')])
                     break
             
-            # If no content found with selectors, get all paragraphs
+          
             if not article_text:
                 article_text = ' '.join([p.text.strip() for p in soup.find_all('p')])
             
